@@ -72,23 +72,34 @@ from osdagbridge.core.reports.report_utils import (
 
 def ch3_loads(input_dict, output_dict=None):
     output_dict = output_dict if output_dict is not None else {}
+
+    def _checked(source, key):
+        val = source.get(key)
+        return val is True or str(val).strip().lower() in ("1", "true", "yes", "checked")
+
+    # Loading-tab selections are authoritative when present. Fall back to
+    # output_dict for older report payloads that contain selection flags there.
+    def _vehicle_selected(key):
+        source = input_dict if key in input_dict else output_dict
+        return _checked(source, key)
+
     # Live load vehicle names mapping
     vehicles = []
-    if input_dict.get(KEY_LL_IRC_CLASS_A):
+    if _vehicle_selected(KEY_LL_IRC_CLASS_A):
         vehicles.append("Class A")
-    if input_dict.get(KEY_LL_IRC_70R_WHEELED):
+    if _vehicle_selected(KEY_LL_IRC_70R_WHEELED):
         vehicles.append("Class 70R (Wheeled)")
-    if input_dict.get(KEY_LL_IRC_70R_TRACKED):
+    if _vehicle_selected(KEY_LL_IRC_70R_TRACKED):
         vehicles.append("Class 70R (Tracked)")
-    if input_dict.get(KEY_LL_IRC_AA_WHEELED):
+    if _vehicle_selected(KEY_LL_IRC_AA_WHEELED):
         vehicles.append("Class AA (Wheeled)")
-    if input_dict.get(KEY_LL_IRC_AA_TRACKED):
+    if _vehicle_selected(KEY_LL_IRC_AA_TRACKED):
         vehicles.append("Class AA (Tracked)")
-    if input_dict.get(KEY_LL_IRC_CLASS_SV):
+    if _vehicle_selected(KEY_LL_IRC_CLASS_SV):
         vehicles.append("Class SV")
-    if input_dict.get(KEY_LL_IRC_70R_BOGIE):
+    if _vehicle_selected(KEY_LL_IRC_70R_BOGIE):
         vehicles.append("Class 70R (Bogie)")
-    if input_dict.get(KEY_LL_IRC_CLASS_FATIGUE):
+    if _vehicle_selected(KEY_LL_IRC_CLASS_FATIGUE):
         vehicles.append("Class Fatigue")
     
     custom = output_dict.get(KEY_LL_CUSTOM_VEHICLES)
@@ -128,7 +139,7 @@ def ch3_loads(input_dict, output_dict=None):
             (KEY_LL_IRC_70R_BOGIE, "Class 70R (Bogie)"),
             (KEY_LL_IRC_CLASS_FATIGUE, "Class Fatigue"),
         )
-        if output_dict.get(key)
+        if _vehicle_selected(key)
     ]
 
     brk_custom = output_dict.get(KEY_LL_CUSTOM_VEHICLES)
@@ -183,7 +194,7 @@ def ch3_loads(input_dict, output_dict=None):
     brk_ecc_table = brk_ecc_str if brk_ecc_str != "N/A" else (_render_value(output_dict, KEY_LL_ECCENTRICITY, " m") or "1.2 m")
     vehicle_rows = []
     for name, key, kind in vehicle_defs:
-        if _checked(output_dict, key):
+        if _vehicle_selected(key):
             braking_considered = "Yes"
             if kind == "sv":
                 braking_considered = "Yes" if _checked(output_dict, KEY_BL_IRC_CLASS_SV) else "No"
