@@ -138,6 +138,11 @@ logger = logging.getLogger(__name__)
 # PREAMBLE
 # ═══════════════════════════════════════════════════════════════════════════════
 
+from osdagbridge.core.reports.styles import (
+    PAGE_GEOMETRY, LATEX_BRAND_COLOR, LATEX_TABLE_DEFAULTS,
+)
+
+
 def preamble(project_name, job_number, report_date, report_version='Rev 0'):
     pn = _tex(project_name)
     jn = _tex(job_number)
@@ -147,7 +152,7 @@ def preamble(project_name, job_number, report_date, report_version='Rev 0'):
 \documentclass[12pt,a4paper]{report}
 
 % Packages
-\usepackage[a4paper, margin=1in]{geometry}
+""" + PAGE_GEOMETRY + r"""
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -182,22 +187,14 @@ def preamble(project_name, job_number, report_date, report_version='Rev 0'):
 \usepackage{needspace}
 
 \numberwithin{figure}{chapter}
-% Table layout and spacing: consistent padding, row height, and longtable pre/post skips
-\setlength{\tabcolsep}{6pt}
-\renewcommand{\arraystretch}{1.12}
-\setlength{\LTpre}{0pt}
-\setlength{\LTpost}{6pt}
-% Table rules (outline thickness) and small extra row height for clarity
-\setlength{\arrayrulewidth}{0.5pt}
-\setlength{\extrarowheight}{0.6pt}
-\setlength{\footskip}{42pt}
+""" + LATEX_TABLE_DEFAULTS + r"""
 
 % Prevent tables from overflowing past the page bottom:
 % if fewer than 5 baseline-skips remain, break to the next page first.
 \BeforeBeginEnvironment{table}{\needspace{5\baselineskip}}
 \BeforeBeginEnvironment{longtable}{\Needspace{5\baselineskip}}
 
-\definecolor{osdagGreen}{HTML}{91B014}
+""" + LATEX_BRAND_COLOR + r"""
 
 \fancypagestyle{main}{
   \fancyhf{}

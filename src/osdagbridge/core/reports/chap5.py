@@ -3,7 +3,10 @@
 # Extracted from report_generator.py â€” DO NOT add business logic here.
 # =============================================================================
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
+from osdagbridge.core.reports.styles import LATEX_TABLE_CELL_PADDING
 
 from osdagbridge.core.utils.common import (
     KEY_DD_ARM_WHEEL_OH,
@@ -1671,7 +1674,7 @@ Cross bracing between adjacent plate girders provides lateral stability during c
 
 \vspace{0.4em}
 \noindent
-\setlength{\tabcolsep}{6pt}
+""" + LATEX_TABLE_CELL_PADDING + r"""
 """ + render_grouped_report_table(
     "Cross Bracing --- Connection and Section Properties", cb_forces_groups,
     headers=["panel", "member", "connection", "section", r"$A_g$ (mmÂ²)", r"$r_{min}$ (mm)"],
@@ -1706,7 +1709,7 @@ End diaphragms at the supports transfer transverse loads to the bearings, restra
 
 \vspace{0.4em}
 \noindent
-\setlength{\tabcolsep}{6pt}
+""" + LATEX_TABLE_CELL_PADDING + r"""
 """ + render_grouped_report_table(
     "End Diaphragm --- Connection and Section Properties", cb_forces_groups,
     headers=["panel", "member", "connection", "section", r"$A_g$ (mmÂ²)", r"$r_{min}$ (mm)"],

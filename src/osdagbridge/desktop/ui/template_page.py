@@ -1835,7 +1835,7 @@ class CustomWindow(QWidget):
 
         create_report_action = QAction("Create Design Report", self)
         create_report_action.setShortcut(QKeySequence("Alt+C"))
-        create_report_action.triggered.connect(lambda _: self.open_report_dialog())
+        create_report_action.triggered.connect(lambda _: self.open_report_dialog(cad_generator=self.output_dock._capture_data() if self.output_dock else None))
         file_menu.addAction(create_report_action)
 
         file_menu.addSeparator()

@@ -13,6 +13,15 @@ from osdagbridge.core.utils.common import (
     KEY_CB_LOAD,
     KEY_MP_GIRDER_BOTTOM_FLANGE_THICKNESS,
     KEY_MP_GIRDER_DEPTH,
+    KEY_MP_ED_TYPE,
+    KEY_MP_ED_BRACING_TYPE,
+    KEY_MP_ED_TOP_CHORD,
+    KEY_MP_ED_BOTTOM_CHORD,
+    KEY_TD_ED_PROP_M,
+    KEY_TD_ED_TOP_CHORD_PROP_M,
+    KEY_TD_ED_BOTTOM_CHORD_PROP_M,
+    KEY_TS_GIRDER_SPACING,
+    KEY_SKEW_ANGLE,
     KEY_MP_GIRDER_TOP_FLANGE_THICKNESS,
     KEY_MP_STIFFENER_BEARING_OUTSTAND,
     KEY_MP_STIFFENER_BEARING_THICKNESS,
@@ -299,6 +308,123 @@ def calculate_bracing_quantities(outputs: dict, steel_density_t_per_m3: float | 
     return quantities
 
 
+
+def calculate_end_diaphragm_quantities(inputs: dict, outputs: dict, n_girders: int) -> dict:
+    """Calculate end-diaphragm steel tonnage from pair-specific design outputs.
+
+    Section masses are in kg/m. Member lengths are reconstructed in metres
+    from girder spacing, effective girder depth and bridge skew.
+    """
+    result = {
+        "end_diaphragm_wt_total": "N.A.",
+        "end_diaphragm_qty": "N.A.",
+        "end_diaphragm_vol_total": "N.A.",
+        "end_diaphragm_vol_formula": "N.A.",
+    }
+
+    try:
+        spacing = _num(inputs.get(KEY_TS_GIRDER_SPACING))
+        skew = _num(inputs.get(KEY_SKEW_ANGLE))
+        if spacing is None or spacing <= 0 or skew is None or n_girders < 2:
+            return result
+
+        tan_skew = math.tan(math.radians(skew))
+        horizontal_length = math.sqrt(spacing**2 + (spacing * tan_skew)**2)
+
+        total_kg = 0.0
+        total_members = 0
+        processed_pairs = 0
+
+        def add_member(mass_key, length, count):
+            nonlocal total_kg, total_members
+            mass = _num(outputs.get(f"{mass_key}.{pair_id}"))
+            if mass is None or mass <= 0 or length <= 0 or count <= 0:
+                return False
+            total_kg += mass * length * count
+            total_members += count
+            return True
+
+        for i in range(n_girders - 1):
+            pair_id = f"G{i + 1}G{i + 2}"
+            ed_type = outputs.get(f"{KEY_MP_ED_TYPE}.{pair_id}")
+            if not ed_type:
+                return result
+
+            if ed_type in ("Rolled Beam", "Welded Beam"):
+                if not add_member(KEY_TD_ED_PROP_M, horizontal_length, 2):
+                    return result
+
+            elif ed_type == "Cross Bracing":
+                bracing_type = str(
+                    outputs.get(f"{KEY_MP_ED_BRACING_TYPE}.{pair_id}", "X")
+                ).strip().upper()
+
+                depth_left = _num(_girder_value_safe(inputs, KEY_MP_GIRDER_DEPTH, i))
+                depth_right = _num(_girder_value_safe(inputs, KEY_MP_GIRDER_DEPTH, i + 1))
+                if depth_left is None or depth_right is None:
+                    return result
+
+                effective_depth = min(depth_left, depth_right)
+                if effective_depth <= 0:
+                    return result
+
+                if bracing_type == "X":
+                    diagonal_length = math.sqrt(
+                        spacing**2 + effective_depth**2
+                        + (spacing * tan_skew)**2
+                    )
+                elif bracing_type == "K":
+                    half_spacing = spacing / 2.0
+                    diagonal_length = math.sqrt(
+                        half_spacing**2 + effective_depth**2
+                        + (half_spacing * tan_skew)**2
+                    )
+                else:
+                    return result
+
+                # Two diagonals in each of the two end frames.
+                if not add_member(KEY_TD_ED_PROP_M, diagonal_length, 4):
+                    return result
+
+                top_enabled = _truth(
+                    outputs.get(f"{KEY_MP_ED_TOP_CHORD}.{pair_id}", True)
+                )
+                # K-bracing always contains a bottom horizontal member in CAD.
+                # X-bracing includes it only when the option is enabled.
+                bottom_enabled = (
+                    True if bracing_type == "K"
+                    else _truth(outputs.get(
+                        f"{KEY_MP_ED_BOTTOM_CHORD}.{pair_id}", True
+                    ))
+                )
+
+                if top_enabled and not add_member(
+                    KEY_TD_ED_TOP_CHORD_PROP_M, horizontal_length, 2
+                ):
+                    return result
+
+                if bottom_enabled and not add_member(
+                    KEY_TD_ED_BOTTOM_CHORD_PROP_M, horizontal_length, 2
+                ):
+                    return result
+            else:
+                return result
+
+            processed_pairs += 1
+
+        if processed_pairs != n_girders - 1 or total_members == 0:
+            return result
+
+        result["end_diaphragm_wt_total"] = _fmt_small(total_kg / 1000.0)
+        result["end_diaphragm_qty"] = str(total_members)
+        result["end_diaphragm_vol_formula"] = "N.A."
+        return result
+
+    except Exception as exc:
+        logger.warning("Error calculating end-diaphragm quantities: %s", exc)
+        return result
+
+
 def calculate_material_quantities(inputs: dict, outputs: dict) -> dict:
     """Calculate quantities (steel tonnage, concrete volume, rebar, studs)
     needed for the material take-off summary (Chapter 7).
@@ -376,6 +502,13 @@ def calculate_material_quantities(inputs: dict, outputs: dict) -> dict:
         "crash_barrier_wt_single": "N.A.",
         "crash_barrier_wt_total": "N.A.",
     }
+
+    quantities.update({
+        "end_diaphragm_wt_total": "N.A.",
+        "end_diaphragm_qty": "N.A.",
+        "end_diaphragm_vol_total": "N.A.",
+        "end_diaphragm_vol_formula": "N.A.",
+    })
     try:
         span_val = inputs.get(KEY_SPAN)
         n_girders_val = inputs.get(KEY_TS_NO_OF_GIRDERS)
@@ -535,6 +668,7 @@ def calculate_material_quantities(inputs: dict, outputs: dict) -> dict:
 
         # 5. Cross bracing: top chord, bottom chord and diagonals
         quantities.update(calculate_bracing_quantities(outputs, steel_density_t_per_m3))
+        quantities.update(calculate_end_diaphragm_quantities(inputs, outputs, n_girders))
 
         # 6. Crash Barrier (Cu.m) and Weight (t)
         # Density is entered in kN/m³ (RCC default 25); convert to T/m³ for the take-off.

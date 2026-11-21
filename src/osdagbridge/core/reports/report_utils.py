@@ -1,6 +1,8 @@
 import os
 import re
 
+from osdagbridge.core.reports.styles import COMPACT_TABLE_LAYOUT
+
 import matplotlib
 matplotlib.use("Agg", force=True)
 import matplotlib.pyplot as plt
@@ -170,8 +172,7 @@ def render_analysis_demands_table(body_latex):
     return (r"""\vspace{1em}
 \begingroup
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.25}
+""" + COMPACT_TABLE_LAYOUT + r"""
 \setlength{\LTleft}{\dimexpr(\textwidth-17.8cm)/2\relax}
 \setlength{\LTright}{\dimexpr(\textwidth-17.8cm)/2\relax}
 \begin{longtable}{|
@@ -468,10 +469,43 @@ class ReportChartGenerator:
         matplotlib.rcParams["ps.fonttype"] = 42
 
 
-        plot_values = [v if v is not None else 0.0 for v in values]
-        colors = ["#b55353" if (v is not None and v > 1.0) else "#6aa84f" if v is not None else "#9e9e9e" for v in values]
         fig, ax = plt.subplots(figsize=(7.2, 3.8), dpi=220)
-        bars = ax.bar(labels, plot_values, color=colors, width=0.55)
+        positions = list(range(len(labels)))
+        valid = [
+            (index, float(value))
+            for index, value in enumerate(values)
+            if value is not None
+        ]
+        if valid:
+            valid_positions, valid_values = zip(*valid)
+            colors = [
+                "#b55353" if value > 1.0 else "#6aa84f"
+                for value in valid_values
+            ]
+            bars = ax.bar(
+                valid_positions, valid_values, color=colors, width=0.55
+            )
+            for bar, value in zip(bars, valid_values):
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height(),
+                    f"{value:.2f}",
+                    ha="center", va="bottom", fontsize=9,
+                )
+            max_value = max(valid_values)
+        else:
+            max_value = 1.0
+
+        for index, value in enumerate(values):
+            if value is None:
+                ax.text(
+                    index, 0.04, "N/A",
+                    ha="center", va="bottom",
+                    fontsize=9, color="#777777",
+                )
+
+        ax.set_xticks(positions)
+        ax.set_xticklabels(labels)
         ax.axhline(1.0, color="#c00000", linestyle="--", linewidth=1.3, label="UR = 1.0")
         ax.set_title(title, fontsize=12, fontweight="bold", pad=10)
         ax.set_xlabel("Primary Element", fontsize=10)
@@ -480,11 +514,7 @@ class ReportChartGenerator:
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.legend(loc="upper right", frameon=False, fontsize=9)
-        ax.set_ylim(0, max(plot_values + [1.0]) * 1.22)
-        for bar, value in zip(bars, values):
-            label = "N/A" if value is None else f"{value:.2f}"
-            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height(),
-                    label, ha="center", va="bottom", fontsize=9)
+        ax.set_ylim(0, max(max_value, 1.0) * 1.22)
         fig.tight_layout()
         path = os.path.join(self.output_dir, filename)
         fig.savefig(path, format="pdf", bbox_inches="tight")
@@ -638,6 +668,7 @@ class ReportChartGenerator:
 
             steel_components = (
                 ("Girders", "steel_girders_wt_total"),
+                ("End Diaphragms", "end_diaphragm_wt_total"),
                 ("Cross Bracing - Top", "bracing_top_wt_total"),
                 ("Cross Bracing - Bottom", "bracing_bot_wt_total"),
                 ("Cross Bracing - Diagonal", "bracing_diag_wt_total"),

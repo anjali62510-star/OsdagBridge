@@ -1,0 +1,2349 @@
+                            OsdagBridge
+          Open Source Software for Steel Girder Bridge Design
+
+
+
+                                 Design Report
+
+
+   Project Name             Synthetic Bridge Integration Test
+   Project Location         Test Location, India
+   Author / Designer        Integration Test
+   Reviewer
+   Organization             Test Organisation
+   Client Name and          Synthetic Client
+   Organization
+   Job Number               SYNTHETIC-001
+   Date                     2026-11-20
+   Report Version           Synthetic Report Validation
+
+
+
+
+Prepared with OsdagBridge                                       Page 1 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+
+
+                            Table of Contents
+Executive Summary                                                                2
+   Project Overview                                                              2
+   Key Design Outcomes Summary                                                   3
+   Design Assumptions and Limitations                                            3
+1 Project Information                                                            5
+  1.1 Project and Design Team Details                                            5
+  1.2 Applicable Codes and Standards                                             5
+2 Input Parameters                                                               6
+  2.1 Basic Inputs (User-Defined)                                                6
+  2.2 Additional Inputs                                                          6
+3 Loads and Load Combinations                                                   10
+4 Analysis Results                                                              13
+5 Design Checks                                                                 14
+  5.1 Plate Girder Design                                                       14
+  5.2 Deck Slab Design                                                          30
+  5.3 Cross Bracing Design                                                      35
+  5.4 End Diaphragm Design                                                      36
+  5.5 Overall Design Check Summary                                              37
+6 Drawings and Visualizations                                                   41
+  6.1 Bridge Configuration and Layout                                           41
+  6.2 Plate Girder — Detailed Views                                             41
+  6.3 Cross Bracing Detail                                                      41
+  6.4 End Diaphragm Detail                                                      42
+7 Bill of Materials                                                             43
+8 Standards & Assumptions                                                       45
+  8.1 Design Standards                                                          45
+  8.2 Analysis and Design Assumptions of This Version                           46
+  8.3 Known Limitations of This Version                                         48
+References                                                                      49
+
+
+
+
+Prepared with OsdagBridge                                              Page 1 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+                          Executive Summary
+   This section provides a concise summary of the bridge design, key inputs, governing
+loads, and final design outcomes.
+
+
+Project Overview
+
+                             Table E.1: Project Overview
+
+  Bridge Type
+  Design Standard                  IRC 5, IRC 6, IRC 22, IRC 24, IS 800
+  Span                             30 m
+  Carriageway Width
+  No. of Girders                   4
+  Girder Spacing
+  Deck Thickness                   250
+  Overall Design Status            Pass
+  Governing Check
+  Overall Utilization Ratio        0.83 (End diaphragm)
+  (max)
+
+
+ [ PLACEHOLDER: Figure 1 – Overall Bridge Plan ]
+
+Figure 1 – Overall Bridge Plan
+
+
+
+
+Prepared with OsdagBridge                                                 Page 2 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+ [ PLACEHOLDER: Figure 2 – Typical Cross-Section (with girder, deck, barriers, foot-
+ path) ]
+
+Figure 2 – Typical Cross-Section (with girder, deck, barriers, footpath)
+
+
+ [ PLACEHOLDER: Figure 3 – 3D View of Bridge Superstructure ]
+
+Figure 3 – 3D View of Bridge Superstructure
+
+
+                 Table E.2: Final Bridge Geometry (after optimization)
+
+                            G1              G2               G3               G4
+  Member ID
+  Section
+  Designation
+  Govern-
+  ing
+  Check
+  Utiliza-               0.83 (End       0.83 (End        0.83 (End         0.83 (End
+  tion Ratio            diaphragm)      diaphragm)       diaphragm)        diaphragm)
+
+
+Note: UR = demand / capacity; UR < 1.0 indicates a passing check.
+
+
+
+Key Design Outcomes Summary
+
+                         Table E.3: Design Outcome Summary
+
+  Component               Controlling check                 Utilization       Status
+                                                              ratio
+  Girder Design           —                                      —              —
+  Cross Bracing Design    Diagonal (Compression)               0.74            Pass
+  End Diaphragm           Diagonal (Compression)               0.83            Pass
+  Design
+  Deck Design             —                                       —             —
+
+
+Design Assumptions and Limitations
+    Additional inputs not provided by the user were assumed by software per IRC/IS
+     code defaults or practical consideration.
+
+    Grillage analysis was performed using OSPGrillage assuming simply supported I-
+     girders.
+
+
+Prepared with OsdagBridge                                                    Page 3 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+    Substructure and foundation design are not included in this report.
+    Splice connections and bearings are not designed in this version.
+
+
+
+
+Prepared with OsdagBridge                                                  Page 4 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                        1     Project Information
+This section records all project metadata as entered by the designer.
+
+
+1.1     Project and Design Team Details
+
+                      Table 1.1: Project and Design Team Details
+
+  Project Name                      Synthetic Bridge Integration Test
+  Project Location                  Test Location, India
+  Designer                          Integration Test
+  Reviewer
+  Organization                      Test Organisation
+  Client                            Synthetic Client
+  Software Version                  OsdagBridge
+
+
+1.2     Applicable Codes and Standards
+    Indian Roads Congress (IRC) 5: General Features of Design
+    Indian Roads Congress (IRC) 6: Loads and Load Combinations
+    Indian Roads Congress (IRC) 22: Composite Construction (Limit State Design)
+    Indian Roads Congress (IRC) 24: Steel Road Bridges (Limit State Method)
+    Indian Roads Congress (IRC) 112: Concrete Road Bridges (deck design)
+    Indian Roads Congress Special Publication (IRC SP) 114: Seismic Design of Road
+      Bridges
+
+    Indian Standard (IS) 800: General Construction in Steel
+    Indian Standard (IS) 2062: Hot Rolled Structural Steel Specification
+    Indian Standard (IS) 6006: Steel Bearings
+
+
+
+
+Prepared with OsdagBridge                                                   Page 5 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                           2     Input Parameters
+This section documents all inputs provided to OsdagBridge. User-provided inputs are
+clearly distinguished from software-assumed defaults. Where the user did not supply a
+value, the software has applied the IRC/IS code default or an empirical guideline; these
+are annotated with an asterisk (* ).
+
+
+2.1       Basic Inputs (User-Defined)
+Note: These inputs are mandatory and were provided by the user.
+
+                               Table 2.1: Project Location
+  Parameter                                   Value
+  Project Location                            Test Location, India
+  Latitude / Longitude                        ,
+  Seismic Zone (IRC 6)
+  Basic Wind Speed (IRC 6)
+  Shade Temp. Max / Min (IRC 6)               ° C / °C
+
+                               Table 2.2: Bridge Geometry
+  Parameter                                   Value
+  Type of Structure
+  Span (m)                                    30 m
+  Carriageway Width (m)
+  Include Median
+  Footpath
+  Skew Angle (degrees)                        (IRC 24 Cl. 504.8 limit: ±15°)
+
+
+
+                               Table 2.3: Material Selection
+  Parameter                                   Value
+  Girder Steel Grade (IS 2062)
+  Cross Bracing Steel Grade
+  End Diaphragm Steel Grade
+  Concrete Deck Grade (IRC 22)
+
+
+
+
+2.2       Additional Inputs
+Where the user has modified additional inputs, those values are reported here. Where no
+modification was made, the software default is shown.
+* Software default value
+
+Prepared with OsdagBridge                                                  Page 6 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+                         Table 2.4: Typical Section Details
+  Parameter                                 Value
+  Overall Bridge Width (m)                  10
+  No. of Girders                            4
+  Girder Spacing (m)
+  Deck Overhang Width (m)
+  Deck Thickness (mm)                       250 mm
+  Footpath Width (m)                        (IRC 5 Cl. 104.3.6 min: 1.5 m)
+  No. of Traffic Lanes                      (per IRC 5 Cl. 104.3.1)
+
+
+                             Table 2.5: Components Details
+  Parameter                                 Value
+  Crash Barrier Type
+  Crash Barrier Load (kN/m)
+  Railing Type
+  Railing Load (kN/m)
+  Wearing Course Material
+  Wearing Course Thickness (mm)
+
+
+
+
+Prepared with OsdagBridge                                                Page 7 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+                        Table 2.6: Girder General Information
+  Girder           Member ID       Design            Girder Type        Girder
+                                   Mode                                 Symmetry
+  G1
+  G2
+  G3
+  G4
+
+
+                         Table 2.7: Girder Section Dimensions
+  Girder          Total        Web, tw        Top Flange (btf ,     Bottom Flange
+                  Depth, D     (mm)           ttf ) mm              (bbf , tbf ) mm
+                  (mm)
+  G1                                          ,                     ,
+  G2                                          ,                     ,
+  G3                                          ,                     ,
+  G4                                          ,                     ,
+
+
+                    Table 2.8: Girder Restraint and Stiffener Details
+  Girder      Torsional      Web Phi-      Intermediate Longitudinal Bearing
+              / Warping      losophy       Stiffeners   Stiffeners   Stiffener
+              Restraint
+  G1          ,                            ; Spacing: ;                   No.: ;
+                                           Thickness:                     Spacing: ;
+                                                                          Thickness:
+  G2          ,                            ; Spacing: ;                   No.: ;
+                                           Thickness:                     Spacing: ;
+                                                                          Thickness:
+  G3          ,                            ; Spacing: ;                   No.: ;
+                                           Thickness:                     Spacing: ;
+                                                                          Thickness:
+  G4          ,                            ; Spacing: ;                   No.: ;
+                                           Thickness:                     Spacing: ;
+                                                                          Thickness:
+
+
+
+
+Prepared with OsdagBridge                                                   Page 8 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+                   Table 2.9: Member Properties: Cross Bracing Details
+  Location          Member            Type of           Bracing          Spacing (m)
+                    IDs               Bracing           Section
+
+
+
+
+                 Table 2.10: Member Properties: End Diaphragm Details
+  Location                Member IDs           Type of Bracing     Bracing Section
+
+
+
+
+                           Table 2.11: Shear Connector Details
+  Parameter                                     Value
+  Stud Diameter (mm)
+  Stud Height (mm)
+  Stud fy (MPa)
+  Stud fu (MPa)
+  No. of Studs per Section
+
+
+
+                              Table 2.12: Partial Safety Factors
+  Parameter                                     Value
+  γM 0 (Yielding / Buckling)
+  γM 1 (Ultimate Stress)
+  γC (Concrete, Basic)
+  γs (Reinforcement)
+  γv (Shear Connectors)
+  γf f t (Fatigue Load)
+  γM f t (Fatigue Strength)
+
+Note: All values are per IRC 22 Table 1 unless user-modified.
+
+
+
+
+Prepared with OsdagBridge                                                   Page 9 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                   3       Loads and Load Combinations
+This section summarizes all loads applied to the bridge and the load combinations con-
+sidered for analysis and design.
+
+
+                                Table 3.1: Dead Load – Self Weight
+  Parameter                                 Value
+  Steel Self-Weight Applied                 78.5 kN/m3
+  Concrete Deck Weight
+  Self-Weight Factor
+
+
+
+                            Table 3.2: Dead Load for Surfacing (DW)
+  Parameter                                 Value
+  Wearing Course Load                       x
+  Additional SIDL (Crash Barrier)           kN/m per barrier
+  Railing Load                              kN/m*
+
+
+                                Table 3.3: Vehicle Live Loads (LL)
+   Vehicle                 Total        Impact                 Braking Load
+                           Load         Factor
+                           (kN)
+                                                    Considered?       Value   Eccentricity
+   None                     —              —             No            —          —
+
+
+
+                                   Table 3.4: Footpath Live Load
+  Parameter                            Value                           Unit
+  Footpath live load                    N/A                           kN/m2
+  Pressure mode                         N/A                             —
+
+
+                           Table 3.5: Wind Load (WL) — per IRC 6
+  Parameter                                 Value
+  Basic Wind Speed, Vb                      [from Project Location]
+  Terrain Type
+  Average Exposed Height, H (m)
+  Hourly Mean Wind Speed, Vz                N/A
+
+* Software default value
+
+Prepared with OsdagBridge                                                      Page 10 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Parameter                             Value
+  Hourly Wind Pressure, Pz              N/A
+  Transverse Wind Force
+  Longitudinal Wind Force
+  Vertical Wind Force
+
+
+                     Table 3.6: Earthquake Load (EL) — per IRC 6
+  Parameter                             Value
+  Seismic Zone                          [from Project Location]
+  Zone Factor, Z
+  Importance Factor, I
+  Type of Soil
+  Sa/g
+  Horizontal Seismic Coefficient, Ah
+  Vertical Seismic Coefficient, Av
+  Horizontal Seismic Force
+  (longitudinal)
+  Horizontal Seismic Force
+  (transverse)
+
+
+
+                    Table 3.7: Temperature Load (TL) — per IRC 6
+  Parameter                             Value
+                                        ◦
+  Maximum Shade Temperature               C
+                                        ◦
+  Minimum Shade Temperature               C
+  Effective Bridge Temp. Range          to ◦ C
+  Temperature Rise / Fall for           + ◦C / = ◦C
+  Design
+
+
+                             Table 3.8: Load Combinations
+         Combination ID              Load cases
+             ULS-01                  DL(1.35/1.00) + SIDL(1.75/1.00) + LL(1.50) +
+                                     WL(0.90) + TL(0.90)
+             ULS-02                  DL(1.35/1.00) + SIDL(1.75/1.00) + LL(1.15) +
+                                     WL(1.50) + TL(0.90)
+             ULS-03                  DL(1.35/1.00) + SIDL(1.75/1.00) + LL(1.15) +
+                                     WL(0.90) + TL(1.50)
+
+
+
+Prepared with OsdagBridge                                               Page 11 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+        Combination ID           Load cases
+             ULS-04              DL(1.00/1.00) + SIDL(1.00/1.00) + LL(0.75) +
+                                 TL(0.50) + VC(1.00)
+             ULS-05              DL(1.00/1.00) + SIDL(1.00/1.00) + LL(0.75) +
+                                 TL(0.50) + BI(1.00)
+             ULS-06              DL(1.00/1.00) + SIDL(1.00/1.00) + LL(0.75) +
+                                 TL(0.50) + FB(1.00)
+             ULS-07              DL(1.35/1.00) + SIDL(1.75/1.00) + LL(0.20) +
+                                 TL(0.50) + EQ(1.50)
+             ULS-08              DL(1.35/1.00) + SIDL(1.75/1.00) + LL(0.20) +
+                                 TL(0.50) + EQ(0.75)
+             SLS-01              DL(1.00) + SIDL(1.20/1.00) + LL(1.00) +
+                                 WL(0.60) + TL(0.60)
+             SLS-02              DL(1.00) + SIDL(1.20/1.00) + LL(0.75) +
+                                 WL(1.00) + TL(0.60)
+             SLS-03              DL(1.00) + SIDL(1.20/1.00) + LL(0.75) +
+                                 WL(0.60) + TL(1.00)
+             SLS-04              DL(1.00) + SIDL(1.20/1.00) + LL(0.75) +
+                                 WL(0.50) + TL(0.50)
+             SLS-05              DL(1.00) + SIDL(1.20/1.00) + LL(0.20) +
+                                 WL(0.60) + TL(0.50)
+             SLS-06              DL(1.00) + SIDL(1.20/1.00) + LL(0.20) +
+                                 WL(0.50) + TL(0.60)
+             SLS-07              DL(1.00) + SIDL(1.20/1.00) + LL(0.00) +
+                                 WL(0.00) + TL(0.50)
+
+Note: All IRC 6 load combinations are auto-generated by OsdagBridge. User-defined
+custom combinations, if any, are appended.
+
+
+
+
+Prepared with OsdagBridge                                             Page 12 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                            4    Analysis Results
+A grillage model was used for structural analysis. The deck is idealized as a grid of
+elastic beam elements — longitudinal members represent the composite steel girders with
+effective slab, and transverse members represent the slab or cross frames. This section
+summarizes the critical output from that analysis.
+
+                       Table 4.1: Summary of Maximum Demands
+Load              Bending Moment                  Shear Force          Reaction at Supports
+Case/           Max            Loc.        Max                  Loc.
+Comb.                   Girder                       Girder              Left       Right
+               (kNm)           (m)         (kN)                 (m)
+   —             —         —         —       —         —         —        —           —
+
+
+                            Table 4.2: Reactions at Supports
+         Load Case                Left Support (kN)             Right Support (kN)
+
+                Table 4.3: Deflection Summary (Live Load & Total Load)
+  Parameter                              Value
+  Deflection due to Live Load, δLL       —
+  Allowable Live Load Deflection         L/800 = 37.5 mm
+  (∆allow )
+  Live Load Deflection Check Status      —
+  Deflection due to Total Load, δtotal   —
+  Allowable Total Deflection (∆allow )   L/600 = 50.0 mm
+  Total Load Deflection Check Status     —
+
+
+[ PLACEHOLDER: Bending Moment Envelope (Envelope ULS): Max/min BM along [ PLACEHOL
+span. X-axis: distance from left support (m). Y-axis: Bending Moment (kN-m). ] X-axis: distanc
+[ PLACEHOLDER: Vertical Deflection Dy (1.0 LL): Maximum deflection along span.
+Load Case: 1.0 LL, Combination: Dy . Nodes shown. Isometric view. ]
+
+
+
+
+Prepared with OsdagBridge                                                       Page 13 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                            5     Design Checks
+This section presents all structural design checks performed by OsdagBridge. For each
+member, the demand from the governing load combination, the code-based capacity, and
+the utilization ratio are tabulated. All checks reference IS 800:2007 and IRC 22:2014
+unless stated otherwise.
+
+
+5.1     Plate Girder Design
+
+         Table 5.1: Girder Section Properties (Final Optimized / User-selected)
+
+
+         Girder                        Property                          Value
+
+                          Depth, D (mm)
+                          Top Flange Width, bf (mm)
+                          Bottom Flange Width, bf (mm)
+                          Top Flange Thickness, tf (mm)
+                          Bottom Flange Thickness, tf (mm)
+                          Web Thickness, tw (mm)
+           G1             Gross Area, A (cm2 )
+                          Moment of Inertia, Iz (cm4 )
+                          Elastic Section Modulus, Zez (cm3 )
+                          Plastic Section Modulus, Zpz (cm3 )
+                          Effective Slab Width, bef f (mm)
+                          Transformed Composite Iz (cm4 )
+                          Depth to Plastic Neutral Axis (mm)
+                          Depth, D (mm)
+                          Top Flange Width, bf (mm)
+                          Bottom Flange Width, bf (mm)
+                          Top Flange Thickness, tf (mm)
+                          Bottom Flange Thickness, tf (mm)
+           G2
+                          Web Thickness, tw (mm)
+                          Gross Area, A (cm2 )
+                          Moment of Inertia, Iz (cm4 )
+                          Elastic Section Modulus, Zez (cm3 )
+                          Plastic Section Modulus, Zpz (cm3 )
+                                                              Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                  Page 14 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+         Girder                       Property                      Value
+
+                          Effective Slab Width, bef f (mm)
+           G2             Transformed Composite Iz (cm4 )
+                          Depth to Plastic Neutral Axis (mm)
+                          Depth, D (mm)
+                          Top Flange Width, bf (mm)
+                          Bottom Flange Width, bf (mm)
+                          Top Flange Thickness, tf (mm)
+                          Bottom Flange Thickness, tf (mm)
+                          Web Thickness, tw (mm)
+           G3             Gross Area, A (cm2 )
+                          Moment of Inertia, Iz (cm4 )
+                          Elastic Section Modulus, Zez (cm3 )
+                          Plastic Section Modulus, Zpz (cm3 )
+                          Effective Slab Width, bef f (mm)
+                          Transformed Composite Iz (cm4 )
+                          Depth to Plastic Neutral Axis (mm)
+                          Depth, D (mm)
+                          Top Flange Width, bf (mm)
+                          Bottom Flange Width, bf (mm)
+                          Top Flange Thickness, tf (mm)
+                          Bottom Flange Thickness, tf (mm)
+                          Web Thickness, tw (mm)
+           G4             Gross Area, A (cm2 )
+                          Moment of Inertia, Iz (cm4 )
+                          Elastic Section Modulus, Zez (cm3 )
+                          Plastic Section Modulus, Zpz (cm3 )
+                          Effective Slab Width, bef f (mm)
+                          Transformed Composite Iz (cm4 )
+                          Depth to Plastic Neutral Axis (mm)
+
+
+
+
+Prepared with OsdagBridge                                             Page 15 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+                       Table 5.2: Girder Section Classification
+
+                                      Slenderness
+    Girder         Element                             Class limit    Classification
+                                         ratio
+                Top Flange
+       G1       Web
+                Overall                   —                —
+                Section
+                Top Flange
+       G2       Web
+                Overall                   —                —
+                Section
+                Top Flange
+       G3       Web
+                Overall                   —                —
+                Section
+                Top Flange
+       G4       Web
+                Overall                   —                —
+                Section
+
+
+Note: IS 800:2007 Table 2
+
+                            Table 5.3: Moment Capacity Check
+
+
+     Girder         Parameter              Formula           Value           Status
+
+                 Applied Moment,        Governing LC                           —
+       G1        Mu                     (ULS)
+                 Design Moment          IRC 22 Cl.                             —
+                 Capacity, Md           603.3.1
+                 Utilization Ratio,     Mu /Md                                 —
+                 Mu /Md
+                 Applied Moment,        Governing LC                           —
+       G2        Mu                     (ULS)
+                 Design Moment          IRC 22 Cl.                             —
+                 Capacity, Md           603.3.1
+                 Utilization Ratio,     Mu /Md                                 —
+                 Mu /Md
+                                                               Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                   Page 16 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+     Girder          Parameter              Formula           Value          Status
+
+                  Applied Moment,        Governing LC                          —
+       G3         Mu                     (ULS)
+                  Design Moment          IRC 22 Cl.                            —
+                  Capacity, Md           603.3.1
+                  Utilization Ratio,     Mu /Md                                —
+                  Mu /Md
+                  Applied Moment,        Governing LC                          —
+       G4         Mu                     (ULS)
+                  Design Moment          IRC 22 Cl.                            —
+                  Capacity, Md           603.3.1
+                  Utilization Ratio,     Mu /Md                                —
+                  Mu /Md
+
+Note: IRC 22 Cl. 603.3.1, IS 800 Cl. 8.2.1
+
+                            Table 5.4: Shear Capacity Check
+
+
+    Girder         Parameter                Formula           Value          Status
+
+                 Applied Shear,        Governing LC                             —
+                 Vu                    (ULS)
+                 Shear Area, Av        dw × tw                                  —
+                 Panel Aspect          —                                        —
+       G1        Ratio, c/d
+                 Shear Buckling        IS 800 Cl. 8.4.2.2                       —
+                 Coefficient, kv
+                                       q      √
+                 Web                    fyw /( 3 τcr )                          —
+                 Slenderness, λw
+                 Design Shear          IRC 22 Cl.                               —
+                 Stress, τb            603.3.3.2
+                 Shear Buckling        Av × τb                                  —
+                 Resistance, Vcr
+                 Utilization           Vu /Vd                                   —
+                 Ratio, Vu /Vd
+                                                               Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                   Page 17 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+    Girder         Parameter            Formula          Value          Status
+
+                 Applied Shear,    Governing LC                            —
+                 Vu                (ULS)
+                 Shear Area, Av    dw × tw                                 —
+                 Panel Aspect      —                                       —
+      G2         Ratio, c/d
+                 Shear Buckling    IS 800 Cl. 8.4.2.2                      —
+                 Coefficient, kv
+                                   q      √
+                 Web                fyw /( 3 τcr )                         —
+                 Slenderness, λw
+                 Design Shear      IRC 22 Cl.                              —
+                 Stress, τb        603.3.3.2
+                 Shear Buckling    Av × τb                                 —
+                 Resistance, Vcr
+                 Utilization       Vu /Vd                                  —
+                 Ratio, Vu /Vd
+                 Applied Shear,    Governing LC                            —
+                 Vu                (ULS)
+                 Shear Area, Av    dw × tw                                 —
+                 Panel Aspect      —                                       —
+      G3         Ratio, c/d
+                 Shear Buckling    IS 800 Cl. 8.4.2.2                      —
+                 Coefficient, kv
+                                   q      √
+                 Web                fyw /( 3 τcr )                         —
+                 Slenderness, λw
+                 Design Shear      IRC 22 Cl.                              —
+                 Stress, τb        603.3.3.2
+                 Shear Buckling    Av × τb                                 —
+                 Resistance, Vcr
+                 Utilization       Vu /Vd                                  —
+                 Ratio, Vu /Vd
+                 Applied Shear,    Governing LC                            —
+      G4
+                 Vu                (ULS)
+                 Shear Area, Av    dw × tw                                 —
+                                                          Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                              Page 18 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+    Girder         Parameter                  Formula      Value         Status
+
+                 Panel Aspect         —                                     —
+                 Ratio, c/d
+                 Shear Buckling       IS 800 Cl. 8.4.2.2                    —
+       G4        Coefficient, kv
+                                      q      √
+                 Web                   fyw /( 3 τcr )                       —
+                 Slenderness, λw
+                 Design Shear         IRC 22 Cl.                            —
+                 Stress, τb           603.3.3.2
+                 Shear Buckling       Av × τb                               —
+                 Resistance, Vcr
+                 Utilization          Vu /Vd                                —
+                 Ratio, Vu /Vd
+
+Note: IS 800 Cl. 8.4, IRC 22 Cl. 603.3.3.2
+
+                     Table 5.5: Interaction Checks (M-V and M-N)
+
+
+     Girder            Check                Condition      Value         Status
+
+                 High Shear               Vu > 0.6 Vd                      —
+                 Condition?
+       G1
+                 Reduced Moment           IRC 22 Cl.                       —
+                 Capacity, Mdv            603.3.3.3
+                 Interaction Check:       —                                —
+                 Mu ≤ Mdv
+                 Interaction Check:       N/A              N/A            N/A
+                 Nu /NRd +
+                 Mu /Mdv ≤ 1.0
+                 High Shear               Vu > 0.6 Vd                      —
+       G2        Condition?
+                 Reduced Moment           IRC 22 Cl.                       —
+                 Capacity, Mdv            603.3.3.3
+                 Interaction Check:       —                                —
+                 Mu ≤ Mdv
+                                                           Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                               Page 19 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+     Girder             Check               Condition        Value          Status
+
+       G2         Interaction Check:     N/A                  N/A               N/A
+                  Nu /NRd +
+                  Mu /Mdv ≤ 1.0
+                  High Shear             Vu > 0.6 Vd                             —
+                  Condition?
+       G3
+                  Reduced Moment         IRC 22 Cl.                              —
+                  Capacity, Mdv          603.3.3.3
+                  Interaction Check:     —                                       —
+                  Mu ≤ Mdv
+                  Interaction Check:     N/A                  N/A               N/A
+                  Nu /NRd +
+                  Mu /Mdv ≤ 1.0
+                  High Shear             Vu > 0.6 Vd                             —
+                  Condition?
+       G4
+                  Reduced Moment         IRC 22 Cl.                              —
+                  Capacity, Mdv          603.3.3.3
+                  Interaction Check:     —                                       —
+                  Mu ≤ Mdv
+                  Interaction Check:     N/A                  N/A               N/A
+                  Nu /NRd +
+                  Mu /Mdv ≤ 1.0
+
+Note: IRC 22 Cl. 603.3.3.3
+
+             Table 5.6: Lateral Torsional Buckling Check – Construction Stage
+
+
+    Girder          Parameter                Formula          Value             Status
+
+                 Effective           min(scb , Lspan )                            —
+      G1         Unbraced
+                 Length, LLT
+                                         t b3 /12
+                                     P
+                 Minor-axis M.I.,                                                 —
+                 Iy
+                                         b t3 /3
+                                     P
+                 Torsional                                                        —
+                 Constant, J
+                                                              Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                   Page 20 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+    Girder         Parameter                Formula       Value         Status
+
+                                      Iy,tf Iy,bf 2
+                 Warping                          h                        —
+                                     Iy,tf + Iy,bf w
+                 Constant, Iw
+                 Elastic / Shear     Material constants                    —
+                 Modulus, E, G
+      G1         Design Bending      IS 800 Cl. 8.2.1.2                    —
+                 Strength, Mp
+                 Elastic Critical    IRC 22 Cl.                            —
+                 Moment, Mcr         603.3.3.1
+                                     p
+                 Non-dim.              Mp /Mcr                             —
+                 Slenderness, λ̄LT
+                 LTB Reduction       IS 800 Cl. 8.2.2                      —
+                 Factor, χLT
+                 LTB Resistance,     χLT Mp                                —
+                 Mb
+                 Mu ≤ Mb             Mu /Mb                                —
+                 Effective           min(scb , Lspan )                     —
+                 Unbraced
+                 Length, LLT
+                                         t b3 /12
+                                     P
+                 Minor-axis M.I.,                                          —
+      G2         Iy
+                                         b t3 /3
+                                     P
+                 Torsional                                                 —
+                 Constant, J
+                                      Iy,tf Iy,bf 2
+                 Warping                          h                        —
+                                     Iy,tf + Iy,bf w
+                 Constant, Iw
+                 Elastic / Shear     Material constants                    —
+                 Modulus, E, G
+                 Design Bending      IS 800 Cl. 8.2.1.2                    —
+                 Strength, Mp
+                 Elastic Critical    IRC 22 Cl.                            —
+                 Moment, Mcr         603.3.3.1
+                                     p
+                 Non-dim.              Mp /Mcr                             —
+                 Slenderness, λ̄LT
+                                                          Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                              Page 21 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+    Girder         Parameter                Formula       Value         Status
+
+                 LTB Reduction       IS 800 Cl. 8.2.2                      —
+      G2         Factor, χLT
+                 LTB Resistance,     χLT Mp                                —
+                 Mb
+                 Mu ≤ Mb             Mu /Mb                                —
+                 Effective           min(scb , Lspan )                     —
+                 Unbraced
+                 Length, LLT
+                                         t b3 /12
+                                     P
+                 Minor-axis M.I.,                                          —
+                 Iy
+                                         b t3 /3
+                                     P
+                 Torsional                                                 —
+      G3
+                 Constant, J
+                                      Iy,tf Iy,bf 2
+                 Warping                          h                        —
+                                     Iy,tf + Iy,bf w
+                 Constant, Iw
+                 Elastic / Shear     Material constants                    —
+                 Modulus, E, G
+                 Design Bending      IS 800 Cl. 8.2.1.2                    —
+                 Strength, Mp
+                 Elastic Critical    IRC 22 Cl.                            —
+                 Moment, Mcr         603.3.3.1
+                                     p
+                 Non-dim.              Mp /Mcr                             —
+                 Slenderness, λ̄LT
+                 LTB Reduction       IS 800 Cl. 8.2.2                      —
+                 Factor, χLT
+                 LTB Resistance,     χLT Mp                                —
+                 Mb
+                 Mu ≤ Mb             Mu /Mb                                —
+                 Effective           min(scb , Lspan )                     —
+      G4
+                 Unbraced
+                 Length, LLT
+                                         t b3 /12
+                                     P
+                 Minor-axis M.I.,                                          —
+                 Iy
+                                                          Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                              Page 22 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+    Girder          Parameter                Formula          Value         Status
+
+                                          b t3 /3
+                                      P
+                  Torsional                                                    —
+                  Constant, J
+                                       Iy,tf Iy,bf 2
+                  Warping                          h                           —
+                                      Iy,tf + Iy,bf w
+                  Constant, Iw
+       G4         Elastic / Shear     Material constants                       —
+                  Modulus, E, G
+                  Design Bending      IS 800 Cl. 8.2.1.2                       —
+                  Strength, Mp
+                  Elastic Critical    IRC 22 Cl.                               —
+                  Moment, Mcr         603.3.3.1
+                                      p
+                  Non-dim.              Mp /Mcr                                —
+                  Slenderness, λ̄LT
+                  LTB Reduction       IS 800 Cl. 8.2.2                         —
+                  Factor, χLT
+                  LTB Resistance,     χLT Mp                                   —
+                  Mb
+                  Mu ≤ Mb             Mu /Mb                                   —
+
+Note: IRC 22 Cl. 603.3.3.1, IS 800 Cl. 8.2.2
+
+                           Table 5.7: Stiffener Design Summary
+
+
+         Girder                           Parameter                      Value
+
+                           Shear Buckling Design Method
+                           Intermediate Stiffener Thickness
+                           (mm)
+            G1
+                           Intermediate Stiffener Spacing (mm)
+                           End Panel Stiffener Thickness (mm)
+                           No. of End Panel Stiffeners
+                           Longitudinal Stiffeners
+                           Shear Buckling Design Method
+            G2
+                           Intermediate Stiffener Thickness
+                           (mm)
+                                                              Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                  Page 23 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+        Girder                        Parameter                         Value
+
+                         Intermediate Stiffener Spacing (mm)
+                         End Panel Stiffener Thickness (mm)
+            G2
+                         No. of End Panel Stiffeners
+                         Longitudinal Stiffeners
+                         Shear Buckling Design Method
+                         Intermediate Stiffener Thickness
+                         (mm)
+            G3
+                         Intermediate Stiffener Spacing (mm)
+                         End Panel Stiffener Thickness (mm)
+                         No. of End Panel Stiffeners
+                         Longitudinal Stiffeners
+                         Shear Buckling Design Method
+                         Intermediate Stiffener Thickness
+                         (mm)
+            G4
+                         Intermediate Stiffener Spacing (mm)
+                         End Panel Stiffener Thickness (mm)
+                         No. of End Panel Stiffeners
+                         Longitudinal Stiffeners
+
+
+                         Table 5.8: End Panel Stiffener Checks
+
+
+     Girder            Check           Required         Provided           Status
+
+                  Web Buckling            N/A               N/A             N/A
+                  Resistance
+       G1
+                  Local Crushing          N/A               N/A             N/A
+                  Resistance
+                  Bearing Capacity        N/A               N/A             N/A
+                  Column Buckling         N/A               N/A             N/A
+                  Resistance
+       G2         Web Buckling            N/A               N/A             N/A
+                  Resistance
+                                                             Continued on next page...
+
+
+
+
+Prepared with OsdagBridge                                                 Page 24 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+     Girder            Check            Required          Provided           Status
+
+                  Local Crushing           N/A               N/A              N/A
+       G2         Resistance
+                  Bearing Capacity         N/A               N/A              N/A
+                  Column Buckling          N/A               N/A              N/A
+                  Resistance
+                  Web Buckling             N/A               N/A              N/A
+                  Resistance
+       G3
+                  Local Crushing           N/A               N/A              N/A
+                  Resistance
+                  Bearing Capacity         N/A               N/A              N/A
+                  Column Buckling          N/A               N/A              N/A
+                  Resistance
+                  Web Buckling             N/A               N/A              N/A
+                  Resistance
+       G4
+                  Local Crushing           N/A               N/A              N/A
+                  Resistance
+                  Bearing Capacity         N/A               N/A              N/A
+                  Column Buckling          N/A               N/A              N/A
+                  Resistance
+
+Note: IS 800 Cl. 8.4.2.2
+
+                      Table 5.9: Serviceability – Deflection Checks
+
+
+     Girder            Check             Allowable          Actual           Status
+
+                 Live Load              L/800 = 37.5                           —
+       G1
+                 Deflection, δLL            mm
+                 (mm)
+                 Total Load             L/600 = 50.0                           —
+                 Deflection, δtotal         mm
+                 (mm)
+       G2        Live Load              L/800 = 37.5                           —
+                 Deflection, δLL            mm
+                 (mm)
+                                                               Continued on next page...
+
+
+
+Prepared with OsdagBridge                                                   Page 25 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Continued from previous page
+
+
+     Girder            Check            Allowable         Actual         Status
+
+       G2        Total Load            L/600 = 50.0                         —
+                 Deflection, δtotal        mm
+                 (mm)
+                 Live Load             L/800 = 37.5                         —
+       G3
+                 Deflection, δLL           mm
+                 (mm)
+                 Total Load            L/600 = 50.0                         —
+                 Deflection, δtotal        mm
+                 (mm)
+                 Live Load             L/800 = 37.5                         —
+       G4
+                 Deflection, δLL           mm
+                 (mm)
+                 Total Load            L/600 = 50.0                         —
+                 Deflection, δtotal        mm
+                 (mm)
+
+Note: IRC 22 Cl. 604.3.2
+
+                Table 5.10: Serviceability – Maximum Stress Limitation
+     Girder      Element               Allowable          Actual         Status
+                                         stress           stress
+       G1        Structural Steel                                           —
+                 (0.9 fy )
+       G2        Structural Steel                                           —
+                 (0.9 fy )
+       G3        Structural Steel                                           —
+                 (0.9 fy )
+       G4        Structural Steel                                           —
+                 (0.9 fy )
+
+Note: The Actual Stress above is the equivalent stress fe(IRC 22 Cl. 604.3.1) for the
+short-term composite section under the SLS envelope, not the bare-steel Md/Z bending
+stress. Since fp=0, the simplified equations below are used.
+
+                       fbc = − − − MPa,      fbt = − − − MPa
+
+
+
+
+Prepared with OsdagBridge                                                Page 26 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+
+
+       Vsls   − − − × 1000
+τb =        =              = − − − MPa                (average web shear stress — Cl. 604.3.1)
+       Aw        −−−
+
+                         q            √
+                           2
+                fe,comp = fbc + 3τb2 = − − −2 + 3 × − − −2 = − − − MPa
+
+                         q             √
+                fe,tens = fbt2 + 3τb2 = − − −2 + 3 × − − −2 = − − − MPa
+
+
+                 fe = max (fe,comp , fe,tens ) =      (Actual Stress, Table 5.10)
+
+
+
+                        Table 5.11: Serviceability – Fatigue Assessment
+       Girder        Stress range,            Fatigue          Utilization          Status
+                      ∆σ (MPa)               limit, ff d         ratio
+                                               (MPa)
+        G1                                                                             —
+        G2                                                                             —
+        G3                                                                             —
+        G4                                                                             —
+
+Supporting Calculations Fatigue calculation for the controlling girder. ∆σ is the normal
+stress RANGE at the worst section produced by the fatigue vehicle (IRC:6 Cl.204.6) traversing
+the span, referred to the short-term composite section modulus — not the total stress under
+any single load combination. The remaining girders are listed row-wise in the table above.
+
+
+                                            ∆σ = MPa
+
+
+                                            ff = MPa
+
+
+                                         µr =,       γmf t =
+
+                                                µr f f   ×
+                                       ff d =          =   =
+                                                γmf t
+    MPa
+
+
+
+                                                   ∆σ
+                                         UR =           = =
+                                                   ff d
+
+
+
+Prepared with OsdagBridge                                                           Page 27 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+
+
+Note: IRC 22 Cl. 605 — governing of normal and shear fatigue (worst by DCR). Capacity
+reduction factor µr applied where plate thickness > 25 mm.
+
+              Table 5.12: Girder Design Summary (DCR / Utilization Ratio)
+  Girder    Controlling     Controlling         Demand Capacity          UR      Status
+            LC / com-         check
+             bination
+    G1
+    G2
+    G3
+    G4
+
+Note: UR = Demand / Capacity. A value ≤ 1.0 indicates a passing check. The con-
+trolling check is the criterion with the highest UR for each girder, with the real load
+case/combination that drives it.
+
+                         Table 5.13: Shear Connector Capacity
+  Parameter                     Formula                     Value       Reference
+                           Qu = min(Qu,s , Qu,c )
+                                   0.8 fu (πd2 /4)
+  Design Resistance,       Qu,s =                                       IRC 22 Cl.
+                                         γ√v
+  Qu                             0.29 α d2 fck Ecm                      606.3.1 (Eq. 6.1)
+                         Qu,c =
+                                         γv
+                              Qr = τf (πd2 /4)
+  Fatigue Shear                                 1/5                    IRC 22 Cl.
+                         τf = τf n 5 × 106 /Nsc
+  Resistance, Qr                                                        606.3.2
+
+
+                          Table 5.14: Shear Connector Spacing
+  Criterion                  Governing                 Actual spacing         Status
+                              spacing                    provided
+  ULS Shear (SL1)                                                               —
+  Full Composite                                                                —
+  (SL2)
+  SLS Fatigue (SR)                                                              —
+  Max Spacing Limit                                                             —
+  (IRC 22)
+
+Note: IRC 22 Cl. 606.4, 606.9. Governing spacing = min(SL1 , SL2 , SR ).
+Supporting Calculations
+
+
+
+Prepared with OsdagBridge                                                     Page 28 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+          P
+ SL1 = VQu                                      (VL : See Table 5.15; IRC 22 Cl. 606.4.1)
+        PL
+ SL2 = HQu L                                                     (L = mm : Shear Span)
+
+        Asl fyk
+   H1 =         × 10−3 = kN      (Asl = mm2 )
+          γm
+   H2 = 0.36 fck Aec × 10−3 = kN     (Aec = bef f tef f = mm2 )
+   H = min(H1 , H2 ) = kN
+       P
+ SR = VQr
+         r
+        VR Aec Y
+   Vr =
+           Ic
+   VR = kN, Vr = kN/mm
+                                                                    (Y, Ic : See Table 5.15)
+
+
+
+
+              Table 5.15: Longitudinal Shear Calculation (IRC 22 Cl.606.4.1)
+  Parameter          Expression                                          Value
+  V                  Factored Shear Force, V                               kN
+
+  Aec                Transformed Compressive Concrete
+  (Transformed)                  bef f tef f
+                     Area, Aec =
+                                     n
+  Y                  Distance to Centroid, Y
+
+  Ic                 Composite Second Moment of Area, Ic
+                            V × Aec × Y
+  VL                 VL =                                                N/mm
+                                Ic
+
+
+                    Table 5.16: Transverse Shear and Detailing Checks
+  Check                                Value                              Status
+  Longitudinal Shear per unit                                                  —
+  length, VL
+  Transverse Shear Capacity of                                                 —
+  Slab, VRd
+  Transverse Shear Check               VL /VRd = —                             —
+  Min. Transverse Reinforcement,       Required , Provided 0.00                —
+  Ast,min                              cm2 /m
+  Stud Diameter ≤ 2 tf                 d = ≤ 2tf =                             —
+  Stud Edge Distance                   Provided (req. ≥ )                      —
+
+Note: IRC 22 Cl. 606.6, 606.10.
+
+
+
+Prepared with OsdagBridge                                                    Page 29 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+5.2     Deck Slab Design
+The reinforced concrete deck slab is designed per IRC 112:2011 (flexure, shear, crack
+width) and IRC 22:2014 (composite construction). Wheel loads are distributed using
+Pigeaud’s method. The deck is checked for flexure in the transverse and longitudinal
+directions, punching shear, one-way (beam) shear, crack width, and reinforcement detail-
+ing.
+
+                    Table 5.17: Deck Slab — Loading and Geometry
+  Effective Span of Deck Slab,     <—> mm (girder spacing, c/c)
+  lef f
+  Deck Thickness, ts               250 mm
+  Clear Cover (IRC 112 Cl.         Top / Bottom mm
+  15.2)
+  Concrete Grade (IRC 112          (fck = MPa, fctm = MPa)
+  Cl. 6.4)
+  Reinforcement Grade (IRC         (fy = <—> MPa)
+  112 Cl. 6.2)
+  Dead Load per Unit Area,         <—> kN/mÂ² (slab self-weight)
+  wDL
+  IRC 6 Wheel Load (Class A        <—> kN
+  / 70R)
+  Tyre Contact Dimension B,        <—> mm
+  along traffic (<—>)
+  Impact Factor Fraction, i        -1.000
+  (IRC 6 Cl. 208.2)
+  Impact Multiplier, (1 + i)       <—>
+  Governing Live Load Case         <—>
+
+
+       Table 5.18: Deck Slab — Flexure Check: Interior Panel (Pigeaud’s Method)
+    Location           Parameter         Formula /           Value           Status
+                                         reference
+                                              2
+                   Transverse BM         wDL lef f /10   <—> kN-m/m             —
+                    (DL), MT,DL
+                   Transverse BM          Effective      <—> kN-m/m             —
+   At Midspan       (LL), MT,LL          width (IRC
+    (Sagging)                           112 Cl. B3.2,
+                                          Eq. B3.1)
+
+
+
+
+Prepared with OsdagBridge                                                 Page 30 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+    Location         Parameter          Formula /            Value           Status
+                                        reference
+                     Total Design      <—> MT,DL         120.00 kN-m/m          —
+                     BM, Mu,sag            + <—
+                                       > (1+i) MT,LL
+                   Effective depth,    ts −cnom −ϕ/2       <—> mm               —
+                           d
+                       Provided        ϕ<—> @ <—         <—> mmÂ²/m            —
+                    Reinforcement,      > mm c/c
+                          As
+                                            0.87 fy As
+                     Neutral-axis           0.36 fck b
+                                                           <—> mm               —
+                      depth, xu
+                      Moment           0.87 fy As (d −   200.00 kN-m/m        PASS
+                    Capacity, MRd      0.42 xu ) (IRC
+                                       112 Cl. 8.2.1,
+                                          Cl. 9.2)
+                     Total Design        0.75 Mu,sag     80.00 kN-m/m           —
+   At Support
+                     BM, Mu,hog
+   (Hogging)
+                    Required Top       Mu /(0.87 fy d)   <—> mmÂ²/m            —
+                    Steel, Ast,top
+                   Effective depth,    ts −cnom −ϕ/2       <—> mm               —
+                           d
+                    Provided Top       ϕ<—> @ <—         <—> mmÂ²/m            —
+                    Reinforcement,      > mm c/c
+                          As
+                                            0.87 fy As
+                     Neutral-axis           0.36 fck b
+                                                           <—> mm               —
+                      depth, xu
+                      Moment           0.87 fy As (d −   160.00 kN-m/m        PASS
+                    Capacity, MRd      0.42 xu ) (IRC
+                                       112 Cl. 8.2.1,
+                                          Cl. 9.2)
+
+Note: IRC 112 Cl. 8.2.1, Cl. 9.2. Distribution (longitudinal) reinforcement designed for
+20% of main steel moment (IRC 21 Cl. 305.18).
+
+               Table 5.19: Deck Slab — Cantilever Overhang Flexure Check
+  Parameter                           Formula              Value             Status
+  Overhang Length, loh                  —                                      —
+
+
+
+
+Prepared with OsdagBridge                                                  Page 31 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Parameter                       Formula              Value            Status
+  Crash Barrier Load           IRC 6 Cl. 206.4          N/A               —
+  Moment, Mbarrier
+  Railing Load, wrailing         N/A (IRC               N/A               —
+                                 6-2017 Cl.
+                                   206.5)
+  Railing Lever Arm, er           = loh (at             N/A               —
+                                overhang tip)
+  Railing Moment, Mrailing        wrailing er           N/A               —
+                                       2
+  Slab Dead Load Moment,          wDL loh /2            N/A               —
+  MDL,slab
+  Dead Load Moment, MDL          MDL,slab +             N/A               —
+                                  Mrailing
+  Wheel Load, Pw               IRC 6-2017 Cl.           N/A               —
+                                   204.1
+  Edge Clearance, f              IRC 6-2017             N/A               —
+                                   Table 3
+  Eccentric Wheel Arm, e         e = loh − f            N/A               —
+
+  Tyre Contact Width             IRC 6-2017             N/A               —
+                               Table 2 / Fig. 1
+  Wearing Course Thickness            —                 N/A               —
+
+  Load Concentration           tyre width + 2×          N/A               —
+  Breadth, b1                   WC thickness
+  Effective Width, bef f        IRC 112:2020            N/A               —
+                                  Eq. B3.2,
+                               1.2e + b1 ≤ L/3
+  Impact Factor Fraction, i    IRC 6-2017 Cl.           N/A               —
+                                   208.2
+  Impact Multiplier, (1 + i)   applied later, in        N/A               —
+                               Mu,oh below —
+                               not included in
+                                    MLL,oh
+  Live Load Moment                Pw e/bef f            N/A               —
+  (eccentric wheel), MLL,oh
+
+
+
+
+Prepared with OsdagBridge                                             Page 32 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Parameter                        Formula                Value             Status
+  Total Hogging Moment,         <—> MDL,oh +               N/A                 —
+  Mu,oh                              <—
+                                >[(1+i) MLL,oh
+                                 + Mbarrier ]
+  Effective depth, d             ts − cnom − ϕ/2           N/A                 —
+
+  Top Reinforcement                    —             ϕN/A @ N/A mm             —
+  Provided                                          c/c (N/A mmÂ²/m)
+  Moment Capacity (top         IRC 112 Cl. 9.2,            N/A                N/A
+  steel), MRd,oh                  Cl. 8.2.1
+
+Note: IRC 6 Cl. 206.4 crash barrier loads applied at kerb face; IRC 112 Cl. 9.2, Cl.
+8.2.1 flexure.
+
+          Table 5.20: Deck Slab — Punching Shear Check (IRC˜112 Cl.˜10.4.6)
+  Parameter                       Formula /               Value             Status
+                                  reference
+  Design Wheel Load              γQ (1 + IF ) Pw        <—> kN                 —
+  (ULS), VEd
+  Tyre Contact Dimensions,           <—>            <—> × <—> mm               —
+  B×W
+  Loaded Area at               c1 × c2 (incl. WC    <—> × <—> mm               —
+  mid-depth, b0                   dispersion)
+  Control Perimeter, u1         2(c1 + c2 ) + 4πd       <—> mm                 —
+
+  Punching Shear Stress, vEd      β VEd /(u1 d)        90.000 MPa              —
+
+  Punching Resistance, vRd,c   IRC 112 Eq. 10.1        180.000 MPa             —
+
+  Punching Shear Check             vEd ≤ vRd,c             0.50               FAIL
+
+Note: β = 1.0 (IRC 112:2020 Cl. 10.4.3(1) — axial wheel load without bending moment
+on the loaded area). Punching shear reinforcement not typically required for deck slabs
+with d ≥ 200 mm and adequate longitudinal reinforcement.
+
+                       Table 5.21: Crack Width Check (Deck Slab)
+  Parameter                              Value / reference
+  Min. Reinforcement for Crack           <—> mmÂ²/m [IRC 112 Cl. 16.5.1]
+  Control, As,min
+  Provided Reinforcement (bottom)        ϕ<—> @ <—> mm c/c (<—> mmÂ²/m)
+
+
+
+
+Prepared with OsdagBridge                                                Page 33 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Parameter                                 Value / reference
+  Max. Permissible Crack Width              0.30 mm [IRC 112 Cl. 12.3.2, Table 12.1]
+
+  Calculated Crack Width, wk                0.2000 mm [IRC 112 Cl. 12.3.4, Eq. 12.5]
+  (governing)
+  Crack Width Check                         PASS
+
+
+                    Table 5.22: One-Way (Beam) Shear Check (Deck Slab)
+  Parameter                          Formula /               Value             Status
+                                     reference
+  Design Shear per unit              γDL VDL +            60.00 kN/m             —
+  width, VEd                       γLL (1+IF )VLL
+  Effective depth, d               ts − cnom − ϕ/2         <—> mm                —
+                                      p
+  Size factor, k                  1+ 200/d ≤ 2.0             <—>                 —
+
+  Long. reinforcement ratio,      Asl /(bw d) ≤ 0.02         <—>                 —
+  ρl
+  Shear resistance (no              vRd,c bw d (Cl.       120.00 kN/m            —
+  stirrups), VRd,c                     10.3.2)
+  One-Way Shear Check                VEd ≤ VRd,c              0.50              FAIL
+
+Note: IRC 112 Cl. 10.3.2. Shear reinforcement not provided in deck slabs; capacity relies
+on concrete and main reinforcement.
+
+                   Table 5.23: Reinforcement Detailing Summary (Deck Slab)
+  Parameter                        Required / limit          Provided          Status
+  Main Reinforcement — Bottom (Transverse)
+
+  Required Area, Ast,req            <—> mmÂ²/m           <—> mmÂ²/m           PASS
+  (mmÂ²/m)
+  Bar Diameter × Spacing            ϕ ≥ 10 mm (IRC        ϕ<—> @ <—>              —
+                                          112)               mm c/c
+  Min. Reinforcement As,min         <—> mmÂ²/m           <—> mmÂ²/m           PASS
+  (IRC 112 Cl. 16.3.1)
+  Max. Bar Spacing (IRC                <—> mm                <—> mm             FAIL
+  112 Cl. 16.6.1.1)
+  Distribution Reinforcement — Longitudinal
+
+
+
+
+Prepared with OsdagBridge                                                    Page 34 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+  Parameter                      Required / limit          Provided           Status
+  Required Area, Ast,dist       ≥ 20% of main steel      <—> mmÂ²/m           PASS
+  (mmÂ²/m)
+  Top Reinforcement (Support)
+
+  Required Area, Ast,top          <—> mmÂ²/m            <—> mmÂ²/m           PASS
+  (mmÂ²/m)
+  Top Reinforcement (Cantilever Overhang)
+
+  Required Area, Ast,oh                 N/A            ϕN/A @ N/A mm           N/A
+  (mmÂ²/m)                                               c/c (N/A
+                                                          mmÂ²/m)
+  Cover and Detailing
+
+  Clear Cover (IRC 112 Cl.         ≥ <—> mm            Top / Bottom mm         FAIL
+  15.2)                            (Table 14.2)
+
+Note: IRC 112 Cl. 16.3, IS 456 Cl. 26.5. All reinforcement provisions satisfy strength
+and detailing requirements.
+
+
+5.3     Cross Bracing Design
+Cross bracing between adjacent plate girders provides lateral stability during construc-
+tion, resists transverse loads (wind, seismic, braking) in service, and prevents lateral
+torsional buckling of the girders. Members are designed per IS 800:2007 Cl. 7 (compres-
+sion) and Cl. 6 (tension). Forces are derived from the grillage model under the governing
+load combination (DL + LL + WL).
+
+              Table 5.24: Cross Bracing — Connection and Section Properties
+
+                                                                Ag             rmin
+      Panel      Member       Connection       Section
+                                                              (mmÂ²)         (mm)
+
+                 Diagonal     Bolted
+      G1-G2
+                 Top /        Bolted
+                 Bottom
+                 chord
+
+Note: Ag = gross cross-sectional area; rmin = minimum radius of gyration.
+
+
+
+
+Prepared with OsdagBridge                                                  Page 35 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+         Table 5.25: Cross Bracing — Slenderness Ratio Check (IS˜800 Cl.˜3.8 )
+                                             Eff.
+    Panel       Member           Nature    length          KL/r        Limit / status
+                                          KL (mm)
+                Diagonal     C                  0                           250 —
+    G1-G2       Top          C                  0                           250 —
+                chord
+                Bottom       T                  0                           400 —
+                chord
+
+Note: 3. Limit = 250 for compression members, 400 for tension members. K = 1.0 for
+members with both ends pinned.
+
+                  Table 5.26: Cross Bracing Design — Capacity Summary
+
+                                     Governing Demand Capacity
+   Panel      Member       Section                             UR                 Status
+                                       LC       (kN)   (kN)
+
+              Diagonal                                                    0.74     PASS
+   G1-G2
+              Chord                                                       0.69     PASS
+
+Note: Designed per IS 800 Cl. 7 (compression) and Cl. 6 (tension). OsdagBridge cross-
+bracing module used.
+
+
+5.4     End Diaphragm Design
+End diaphragms at the supports transfer transverse loads to the bearings, restrain the bot-
+tom flanges against lateral displacement, and maintain the girder cross-section geometry
+during construction and in service. They are designed per IS 800:2007 and IRC 24:2010
+Cl. 507.
+
+              Table 5.27: End Diaphragm — Connection and Section Properties
+
+                                                                 Ag               rmin
+      Panel       Member         Connection     Section
+                                                               (mmÂ²)           (mm)
+
+                 Diagonal        Bolted
+      G1-G2
+                 Top /           Bolted
+                 Bottom
+                 chord
+
+Note: Ag = gross cross-sectional area; rmin = minimum radius of gyration.
+
+
+
+
+Prepared with OsdagBridge                                                    Page 36 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+        Table 5.28: End Diaphragm — Slenderness Ratio Check (IS˜800 Cl.˜3.8 )
+                                           Eff.
+    Panel     Member           Nature    length        KL/r       Limit / status
+                                        KL (mm)
+              Diagonal     C                0                           250 —
+    G1-G2     Top          C                0                           250 —
+              chord
+              Bottom       T                0                           400 —
+              chord
+
+Note: 3. Limit = 250 for compression members, 400 for tension members. K = 1.0 for
+members with both ends pinned.
+
+               Table 5.29: End Diaphragm Design — Capacity Summary
+
+                                   Governing Demand Capacity
+  Panel     Member       Section                             UR             Status
+                                     LC       (kN)   (kN)
+
+            Diagonal                                                 0.74   PASS
+  G1-G2
+            Chord                                                    0.69   PASS
+
+Note: Designed per IS 800 Cl. 7 (compression) and Cl. 6 (tension). OsdagBridge cross-
+bracing module used.
+
+
+5.5     Overall Design Check Summary
+
+              Table 5.30: Overall Design Check Summary — All Members
+      Member /         Governing load           Demand       Capacity       UR
+       check           combo
+      Girder —         —                           —             —              —
+      Moment
+   Girder — Shear      —                           —             —              —
+
+   Girder — LTB        —                           —             —              —
+      (constr.)
+      Girder —         —                           —             —              —
+      Deflection
+   Girder — Stress     —                           —             —              —
+
+  Girder — Fatigue     —                           —             —              —
+
+
+
+
+Prepared with OsdagBridge                                               Page 37 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+     Member /         Governing load            Demand        Capacity       UR
+      check           combo
+  Transverse Shear    —                             —             —           —
+       (slab)
+    Crack Width       Frequent SLS              0.200 mm      0.300 mm       0.67
+       (slab)
+   Deck — Flexure     Basic ULS: 0DL + 0LL       120.00        200.00        0.60
+      (sagging)                                 kN-m/m        kN-m/m
+   Deck — Flexure     Basic ULS: 0DL + 0LL       80.00         160.00        0.50
+      (hogging)                                 kN-m/m        kN-m/m
+       Deck —         Basic ULS: 0DL + 0LL        N/A           N/A          N/A
+      Cantilever
+      Overhang
+      Deck —          Basic ULS: 0DL + 0LL     90.00 MPa     180.00 MPa      0.50
+   Punching Shear
+      Deck —          Basic ULS: 0DL + 0LL     60.00 kN/m       120.00       0.50
+   One-Way Shear                                                kN/m
+  Cross Bracing —     —                             —             —          0.74
+    Compression
+  Cross Bracing —     —                             —             —          0.62
+      Tension
+  Cross Bracing —     —                             —             —           —
+    Slenderness
+   End Diaphragm              Rolled / Welded section — design to be added
+     — Moment
+   End Diaphragm              Rolled / Welded section — design to be added
+      — Shear
+
+Note: UR = Demand / Capacity. All values ≤ 1.0 indicate passing checks. The governing
+check for each component is highlighted in the individual design check sections above.
+
+
+
+
+Prepared with OsdagBridge                                                Page 38 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                                                      Steel Plate Girder Utilization Ratio
+                                                1.2
+                                                                                             UR = 1.0
+
+
+        Utilization Ratio (Demand / Capacity)
+                                                1.0
+
+                                                                        0.81
+                                                0.8
+
+
+                                                0.6
+
+
+                                                0.4
+
+
+                                                0.2
+
+
+                                                0.0
+                                                                 Steel Plate Girders
+                                                                  Primary Element
+
+
+Figure 5.1: Steel Plate Girder Utilization Ratio
+
+
+                                                      Concrete Deck Slab Utilization Ratio
+                                                1.2
+                                                                                             UR = 1.0
+        Utilization Ratio (Demand / Capacity)
+
+
+
+
+                                                1.0
+
+
+                                                0.8
+                                                                        0.67
+                                                0.6
+
+
+                                                0.4
+
+
+                                                0.2
+
+
+                                                0.0
+                                                                Concrete Deck Slab
+                                                                 Primary Element
+
+
+Figure 5.2: Concrete Deck Slab Utilization Ratio
+
+
+                                                        Cross Bracing Utilization Ratio
+                                                1.2
+                                                                                             UR = 1.0
+        Utilization Ratio (Demand / Capacity)
+
+
+
+
+                                                1.0
+
+
+                                                0.8                     0.74
+
+
+                                                0.6
+
+
+                                                0.4
+
+
+                                                0.2
+
+
+                                                0.0
+                                                                  Cross Bracing
+                                                                 Primary Element
+
+
+Figure 5.3: Cross Bracing Utilization Ratio
+
+
+
+Prepared with OsdagBridge                                                                       Page 39 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                                                     End Diaphragm Utilization Ratio
+                                               1.2
+                                                                                       UR = 1.0
+
+
+       Utilization Ratio (Demand / Capacity)
+                                               1.0
+
+                                                                   0.83
+                                               0.8
+
+
+                                               0.6
+
+
+                                               0.4
+
+
+                                               0.2
+
+
+                                               0.0
+                                                              End Diaphragms
+                                                              Primary Element
+
+
+Figure 5.4: End Diaphragm Utilization Ratio
+
+
+
+
+Prepared with OsdagBridge                                                                 Page 40 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                6      Drawings and Visualizations
+This section presents CAD-generated views of the designed bridge and its components.
+All views are generated automatically by OsdagBridge using pythonOCC.
+
+
+6.1     Bridge Configuration and Layout
+
+ [ PLACEHOLDER: Overall 3D Bridge Superstructure ]
+Figure 6.1: Overall 3D Bridge Superstructure
+
+
+ [ PLACEHOLDER: Typical Cross Section ]
+Figure 6.2: Typical Cross Section
+
+
+ [ PLACEHOLDER: Top View ]
+Figure 6.3: Top View
+
+
+6.2     Plate Girder — Detailed Views
+
+ [ PLACEHOLDER: 3D View of Plate Girders ]
+Figure 6.4: 3D View of Plate Girders
+
+
+ [ PLACEHOLDER: Cross Section of Plate Girder ]
+Figure 6.5: Cross Section of Plate Girder
+
+
+ [ PLACEHOLDER: Side View of Girder ]
+Figure 6.6: Side View of Girder
+
+
+6.3     Cross Bracing Detail
+
+ [ PLACEHOLDER: Cross Bracing Layout ]
+Figure 6.7: Cross Bracing Layout
+
+[ Cross Bracing – Bracing      [ Cross Bracing – Top      [ Cross Bracing – Bottom
+        Section ]                 Chord Section ]              Chord Section ]
+Figure 6.8: Cross            Figure 6.9: Cross Bracing   Figure 6.10: Cross
+Bracing – Bracing Section    – Top Chord Section         Bracing – Bottom Chord
+                                                         Section
+
+
+Prepared with OsdagBridge                                              Page 41 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+6.4     End Diaphragm Detail
+
+ [ PLACEHOLDER: End Diaphragm Layout ]
+Figure 6.11: End Diaphragm Layout
+
+   [ End Diaphragm –          [ End Diaphragm – Top         [ End Diaphragm –
+    Bracing Section ]             Chord Section ]         Bottom Chord Section ]
+Figure 6.12: End            Figure 6.13: End             Figure 6.14: End
+Diaphragm – Bracing         Diaphragm – Top Chord        Diaphragm – Bottom
+Section                     Section                      Chord Section
+
+
+
+
+Prepared with OsdagBridge                                             Page 42 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                              7     Bill of Materials
+                        Table 7.1: Bill of Materials for Superstructure
+
+                                                         Total        Total
+              Item                                             Weight
+  S.N.                            Volume       Quantity Volume        Weight
+           Description                                      3   (t)
+                                                         (m )          (t)
+    1    Structural Steel         0.03 m2 ×        4          3.00         5.89       23.55
+         (IS 2062) for            30.00 m =
+         Girders                   0.75 m3
+  2(a)   Cross Bracing -            N.A.         N.A.         N.A.        N.A.         N.A.
+         Top Chord
+  2(b)   Cross Bracing -            N.A.         N.A.         N.A.        N.A.         N.A.
+         Bottom Chord
+  2(c)   Cross Bracing -            N.A.         N.A.         N.A.        N.A.         N.A.
+         Diagonal Chord
+  3(a)   Stiffeners -               N.A.         N.A.         N.A.        N.A.         N.A.
+         Bearing
+  3(b)   Stiffeners -               N.A.         N.A.         N.A.        N.A.         N.A.
+         Intermediate
+    4    Connections                10% ×          1          0.30         2.35        2.35
+                                  3.00 m3 =
+                                   0.30 m3
+    5    Concrete (M40)           10.00 m ×        1         75.00        187.50      187.50
+         for Deck Slab             0.25 m ×
+                                  30.00 m =
+                                   75.00 m3
+    6    Reinforcement            0.04 m2 ×        1          1.15         9.00        9.00
+         Steel (Fe 500)           30.00 m =
+                                   1.15 m3
+    7    Shear Stud                 N.A.         N.A.         N.A.        N.A.         N.A.
+         Connectors
+    8    Crash Barrier              N.A.         N.A.         N.A.        N.A.         N.A.
+
+
+
+
+Prepared with OsdagBridge                                                          Page 43 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                                     Structural Steel Tonnage
+
+                     25    23.55
+
+
+                     20
+       Weight (t)
+
+
+
+                     15
+
+
+                     10
+
+
+                      5
+                                                                       2.35
+
+                      0
+                          Girders                                   Connections
+                                       Structural Steel Component
+
+
+Figure 7.1: Structural Steel Tonnage Summary
+
+                                      Concrete Deck Volume
+
+                     80
+                                                 75.00
+                     70
+
+                     60
+       Volume (m3)
+
+
+
+
+                     50
+
+                     40
+
+                     30
+
+                     20
+
+                     10
+
+                      0
+                                             Deck Concrete
+                                               Material
+
+
+Figure 7.2: Concrete Deck Volume Summary
+
+                                    Reinforcement Steel Weight
+
+                     10
+                                                  9.00
+
+                      8
+       Weight (t)
+
+
+
+
+                      6
+
+
+                      4
+
+
+                      2
+
+
+                      0
+                                          Deck Reinforcement
+                                               Material
+
+
+Figure 7.3: Deck Reinforcement Steel Summary
+
+
+
+Prepared with OsdagBridge                                                         Page 44 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                    8      Standards & Assumptions
+This section provides references to standards used to calibrate the OsdagBridge design
+modules, and notes the limitations of the current software version.
+
+
+8.1      Design Standards
+The following Indian Road Congress (IRC) codes and Indian Standards (IS) form the
+basis of all design calculations in this software.
+
+
+                                  Table 8.1: IRC Codes
+      Code        Year     Title / Scope
+      IRC 5       2015     General Features of Design - carriageway widths, kerb,
+                           footpath dimensions
+      IRC 6       2017     Loads and Load Combinations - dead load, live load,
+                           impact, wind, temperature, etc.
+    IRC 22        2015     Composite Construction (LS) - Composite section
+                           properties, ULS/SLS design, shear connectors
+    IRC 24        2010     Steel Road Bridges (LS) - Stiffener design, skew angle
+                           limits, diaphragm requirements
+   IRC 112        2020     Concrete Road Bridges - Deck slab flexure, shear, crack
+                           width, reinforcement
+    IRC SP        2018     Seismic Design of Road Bridges
+      114
+
+
+                                   Table 8.2: IS Codes
+       Code         Year     Scope
+       IS 800       2007     Steel construction - tension, compression, bending,
+                             shear, LTB, stiffeners, combined checks
+       IS 456       2000     Concrete - simplified stress-block for deck moment
+                             capacity
+     IS 1786        2008     Reinforcement steel properties
+  IS 1893 (Part     2014     Earthquake resistant design
+        3)
+     IS 2062        2011     Structural steel - yield and ultimate strength by grade
+
+
+
+
+Prepared with OsdagBridge                                                  Page 45 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+8.2     Analysis and Design Assumptions of This Ver-
+        sion
+Structural Analysis
+
+    All girders are modelled as simply supported; continuous spans are not currently
+      supported.
+
+    A 3D grillage model (OSPGrillage) is used for load distribution. Grillage members
+      carry composite section properties after the construction stage.
+
+    The transverse member forces are computed using an approximate 2D frame anal-
+      ogy. For irregular or skewed geometries, a 3D FEM is recommended.
+
+    Fixed bearing stiffness is modelled as k = 1,000,000 kN/m (virtually rigid); free/expansion
+      bearing as k = 100 kN/m.
+
+    Construction stage sequence analysis is approximate. Detailed staged analysis
+      should be performed for long-term deflection checks.
+
+   Composite Action
+
+    Full shear connection is assumed at ULS with headed stud connectors designed per
+      IRC 22:2015 Cl.606.
+
+    Short-term composite section properties (modular ratio n = Es/Ecm) are used for
+      ULS checks.
+
+    Long-term composite section properties (with creep-adjusted modular ratio) are
+      used for SLS deflection and crack-width checks.
+
+    Pre-composite stage: the steel girder alone resists all construction loads prior to
+      concrete gaining strength.
+
+   Material Properties (IRC 22:2015 Annex III)
+
+    Steel: Es = 200,000 MPa, Gs = 80,000 MPa, ν = 0.30, α = 11.7 × 10−6/◦C
+      (grade-independent).
+
+    Minimum structural concrete grade: M25.
+    Default reinforcement grade: Fe500.
+   Partial Safety Factors (IRC 22:2015 Cl.601.4)
+
+    γm0 (steel yield, ULS) = 1.10
+    γm1 (steel ultimate, ULS) = 1.25
+
+Prepared with OsdagBridge                                                   Page 46 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+    Reinforcement (ULS) = 1.15
+    Welds – shop: 1.25; field: 1.50
+    Fatigue (γmf t) = 1.35
+   Loading
+
+    Dead load densities per IRC 6:2017 Cl.203: structural steel 78.5 kN/m3, concrete
+     25.0 kN/m3 , bituminous wearing course 24.0 kN/m3 .
+
+    Multi-lane live load reduction factors per IRC 6:2017 Cl.204.4 Table 6A: 1st lane
+     = 1.0, 2nd lane = 0.8, 3rd lane onwards = 0.4.
+
+    Impact factor (dynamic load allowance) computed from span per IRC 6:2017 Cl.208.2/208.3.
+    Wind load applied as transverse, longitudinal, and vertical components per IRC
+     6:2017 Cl.209.3.3–209.3.5.
+
+   Serviceability Limits
+
+    Deflection limits (IRC 22:2015 Cl.604.3.2): live load + impact ≤ L/800; total
+     ≤ L/600.
+
+    SLS stress limits: concrete σc ≤ 0.48fck ; rebar σs ≤ 0.80fyk ; steel fe ≤ 0.9fy .
+    Permissible crack width: wk ≤ 0.3 mm (bridge deck, exposure class XS2/XD2 per
+     IRC 112:2020 Cl.12.3.2).
+
+   Fatigue
+
+    Reference fatigue life: Nsc = 2 × 106 cycles (IRC 22:2015 Cl.605).
+    Constant stress range is assumed. A thickness correction factor µr is applied for
+     plate thickness > 25 mm.
+
+   Stiffener Design
+
+    Intermediate transverse stiffener and bearing stiffener design follows IS 800:2007
+     Cl.8.7.2/8.7.3 and IRC 24:2010 Cl.509.7.2/509.7.3.
+
+
+
+
+Prepared with OsdagBridge                                                Page 47 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+
+8.3     Known Limitations of This Version
+    Substructure (piers, pile caps, foundations) and bearing design are not included.
+    Splice connection design is not implemented.
+    Skew angle > 15 degrees requires independent manual analysis (IRC 24 Cl. 504.8).
+    Construction stage sequence analysis is approximate; detailed staged analysis should
+      be performed for long-term deflection checks.
+
+    The grillage analysis assumes simply supported boundary conditions; continuous
+      spans are not currently supported.
+
+
+
+
+Prepared with OsdagBridge                                                  Page 48 of 49
+Synthetic Bridge Integration Test | SYNTHETIC-001
+                                           2026-11-20 | Synthetic Report Validation
+
+                                 References
+  1. IRC 5 (2024) — Standard Specifications and Code of Practice for Road Bridges,
+     Section I: General Features of Design.
+
+  2. IRC 6 (2017) — Standard Specifications and Code of Practice for Road Bridges,
+     Section II: Loads and Load Combinations.
+
+  3. IRC 22 (2014) — Standard Specifications and Code of Practice for Road Bridges,
+     Section VI: Composite Construction (Limit State Design).
+
+  4. IRC 24 (2010) — Standard Specifications and Code of Practice for Road Bridges,
+     Section V: Steel Road Bridges (Limit State Method).
+
+  5. IRC 112 (2011) — Code of Practice for Concrete Road Bridges.
+
+  6. IRC SP 114 (2018) — Guidelines for Seismic Design of Road Bridges.
+
+  7. IS 800 (2007) — Indian Standard: General Construction in Steel — Code of Prac-
+     tice.
+
+  8. IS 2062 (2011) — Hot Rolled Medium and High Tensile Structural Steel — Specifi-
+     cation.
+
+  9. Subramanian, N. (2008). Design of Steel Structures. Oxford University Press.
+
+ 10. Steel-INSDAG Teaching Resource Materials. https://www.steel-insdag.org
+
+
+
+
+Prepared with OsdagBridge                                               Page 49 of 49
+

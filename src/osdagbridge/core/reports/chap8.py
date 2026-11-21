@@ -83,7 +83,7 @@ form the basis of all design calculations in this software.
 
 \clearpage
 \section{Analysis and Design Assumptions of This Version}
-\label{sec:assumptions}
+\label{sec:analysis_design_assumptions}
 
 \textbf{Structural Analysis}
 
