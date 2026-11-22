@@ -731,9 +731,9 @@ def build_report_payload(request, input_dict, output_dict):
                     input_dict['seismic_zone'] = weather.get('zone')
                 if 'wind_speed' not in input_dict and weather.get('wind_speed'):
                     input_dict['wind_speed'] = weather.get('wind_speed')
-                if 'shade_temp_max' not in input_dict and weather.get('max_temp'):
+                if 'shade_temp_max' not in input_dict and weather.get('max_temp') is not None:
                     input_dict['shade_temp_max'] = weather.get('max_temp')
-                if 'shade_temp_min' not in input_dict and weather.get('min_temp'):
+                if 'shade_temp_min' not in input_dict and weather.get('min_temp') is not None:
                     input_dict['shade_temp_min'] = weather.get('min_temp')
         except Exception as e:
             logger.warning(f"Failed to parse project location data: {e}")
